@@ -1,0 +1,216 @@
+<!-- add.jinja2 or edit.jinja2 -->
+{% extends "zhanor_admin:templates/admin/layout/default.jinja2" %}
+
+{% block javascript %}
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js?v={{configs.basic.version}}"></script>
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js?v={{configs.basic.version}}"></script>
+
+<script src="/static/assets/js/backend/user_rule.js"></script>
+
+<script src="/static/assets/js/backend/upload.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.0.0/tinymce.min.js"
+    integrity="sha512-xEHlM+pBhSw2P/G+5x3BR8723QPEf2bPr4BLV8p8pvtaCHmWVuSzzKy9M0oqWaXDZrB3r2Ntwmc9iJcNV/nfBQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"
+    integrity="sha512-K/oyQtMXpxI4+K0W7H25UopjM8pzq0yrVdFdG21Fh5dBe91I40pDd9A4lzNlHPHBIP2cwZuoxaUSX0GJSObvGA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/ar-dz.min.js"
+    integrity="sha512-qpDG6agspDXhnOZkCoWtFNJ13B6Fq6pwIuZoLw0b05J8TDd1qohuTaemmrpsN3ZVtB7AI7ZnqH5CVVIj01SV5g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+<script>
+    var currentButton = undefined;
+    $(".btn-submit").on('click', function (event) {
+        currentButton = $(this)
+    });
+    $("#user_rule_form").validate({
+        submitHandler: function (form) {
+            $("#app-loading-indicator").removeClass("opacity-0");
+            currentButton.prop("disabled", true).html("{{_('Please wait')}}");$("#app-loading-indicator").removeClass("opacity-0");
+            var formData = $('#user_rule_form').serialize();
+            var type = currentButton.data('type');
+            var buttonText = currentButton.text();
+            $.ajax({
+                type: "POST",
+                url: "/admin/user/rule/save",
+                data: formData,
+                contentType: 'application/x-www-form-urlencoded',
+                processData: false,
+                success: function (data) {
+                    toastr.options.timeOut = 200;
+                    toastr.options.onHidden = function () {
+                        currentButton.prop("disabled", false).html(buttonText);
+                         if (type == 'submit-return') {
+                             window.location.href = '/admin/user/rule';
+                         } else if (type == 'submit-new-entry') {
+                             window.location.href = '/admin/user/rule/add';
+                         } else {
+                             window.location.reload();
+                         }
+                    }
+                    toastr.success(_('Submit Successfully'));
+                },
+                error: function (xhr, status, error) {
+                    let message = xhr.responseJSON.message;
+                    toastr.error(message);
+                    currentButton.prop("disabled", false);
+                },
+                complete: function (xhr, textStatus) {
+                    $("#app-loading-indicator").addClass("opacity-0");
+                },
+            });
+
+            return false;
+        },
+        errorElement: "div",
+        errorPlacement: function (error, element) {
+            $(element).removeClass('is-valid');
+            $(element).addClass('is-invalid');
+            error.addClass("mt-1 p-1 text-warning");
+            if (element.prop("type") === "checkbox"||element.parent().find('button').length > 0) {
+                error.insertAfter(element.parent());
+            } else {
+                error.insertAfter(element);
+            }
+        },
+        success: function (label, element) {
+            $(element).removeClass('is-invalid');
+            $(element).addClass('is-valid mb-2');
+            $(label).addClass('d-none');
+        },
+    });
+</script>
+{% endblock javascript %}
+{% block content %}
+<!-- Page body -->
+<div class="page-body pt-6">
+    <div class="container-fluid px-4">
+        <div class="row">
+            <div class="col-md-5 mx-auto">
+                <form id="user_rule_form" method="post" action>
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="pid" required>{{_('Parent ID')}}</label>
+                        <select id="pid" type="text" class="form-select" name="pid">
+                            <option value="0" {% if value.pid==0 %}selected{% endif %}>{{_('None')}}</option>
+                            {% for user_rule in user_rules%}
+                            <option value="{{user_rule.id}}" {% if value.pid==user_rule.id %}selected{% endif %}>{{_(user_rule.title)}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="type" required>{{_('Type')}}</label>
+                        <select id="type" type="text" class="form-select" name="type">
+                            <option value="menu">{{_('Menu')}}</option>
+                            <option value="action">{{_('Action')}}</option>
+
+                        </select>
+                    </div>
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="name" required>{{_('Route Name')}}</label>
+                        <input class="form-control" type="text" id="name" name="name" value="{{value.name}}"
+                            placeholder="Route Name" maxlength=100 required />
+                    </div>
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="url_path" required>{{_('Url Path')}}</label>
+                        <input class="form-control" type="text" id="url_path" name="url_path" value="{{value.url_path}}"
+                            placeholder="Url Path" maxlength=150 required />
+                    </div>
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="title" required>{{_('Title')}}</label>
+                        <input class="form-control" type="text" id="title" name="title" value="{{value.title}}"
+                            placeholder="Title" maxlength=50 required />
+                    </div>
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="icon" required>{{_('Icon')}}</label>
+                        <div class="input-group mb-2">
+                            <input class="form-control" type="text" id="icon" name="icon" value="{{value.icon}}"
+                           placeholder="Icon" maxlength=50 required />
+                           <button class="btn {{value.icon}}" id="btn-select-icon" type="button" data-bs-toggle="modal" data-bs-target="#modal-select-icon"></button>
+                           <button class="btn" type="button" data-bs-toggle="modal" data-bs-target="#modal-select-icon">{{_('Selcet Icon')}}</button>
+                       </div>
+                    </div>
+                
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="description">{{_('Description')}}</label>
+                        <input class="form-control" type="text" id="description" name="description"
+                            value="{{value.description}}" placeholder="Description" maxlength=100 />
+                    </div>
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="createtime">{{_('Creation Time')}}</label>
+                        <input type="datetime" class="form-control" id="createtime" name="createtime"
+                            value="{{value.createtime}}" placeholder="Creation Time" />
+                    </div>
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="updatetime">{{_('Update Time')}}</label>
+                        <input type="datetime" class="form-control" id="updatetime" name="updatetime"
+                            value="{{value.updatetime}}" placeholder="Update Time" />
+                    </div>
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="weigh">{{_('Weight')}}</label>
+                        <input type="number" class="form-control" step="1" id="weigh" name="weigh"
+                            value="{{value.weigh}}" placeholder="Weight" />
+                    </div>
+                    <div class="mb-[20px]">
+                        <label class="form-label" for="status">{{_('Status')}}</label>
+                        <select id="status" type="text" class="form-select" name="status">
+                            <option value="normal">{{_('Normal')}}</option>
+                            <option value="hidden">{{_('Hidden')}}</option>
+
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" form="user_rule_form" data-type="submit"
+                            class="btn btn-primary btn-submit">
+                            {{_('Submit')}}
+                        </button>
+                        <button type="submit" form="user_rule_form" data-type="submit-return"
+                            class="btn btn-primary btn-submit">
+                            {{_('Submit & Return')}}
+                        </button>
+                        <button type="submit" form="user_rule_form" data-type="submit-new-entry"
+                            class="btn btn-primary btn-submit">
+                            {{_('Submit & New Entry')}}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-select-icon" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">{{_('Select Icon')}}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div id="icon-list">
+                <input type="text" class="form-control fuzzy-search"   placeholder="{{_('Input keyword To Search')}}"/>
+                <ul class="py-3 list d-flex align-content-center flex-wrap" style="list-style:none">
+                    {% for icon in icons%}
+                    <li class="ti {{icon}} fs-1 p-1" onclick="javascript:$('#icon').val('ti {{icon}}');$('#btn-select-icon').removeClass().addClass('btn ti {{icon}}')" data-bs-dismiss="modal" aria-label="Close"><p class="name d-none">{{icon}}</p></li>
+                    {% endfor %}
+ 
+                </ul>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+
+{% endblock content %}

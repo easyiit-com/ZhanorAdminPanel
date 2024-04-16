@@ -1,0 +1,129 @@
+<!-- add.jinja2 or edit.jinja2 -->
+{% extends "zhanor_admin:templates/admin/layout/default.jinja2" %}
+
+{% block javascript %}
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js?v={{configs.basic.version}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js?v={{configs.basic.version}}"></script>
+
+<script src="/static/assets/js/backend/user_group.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.0.0/tinymce.min.js" integrity="sha512-xEHlM+pBhSw2P/G+5x3BR8723QPEf2bPr4BLV8p8pvtaCHmWVuSzzKy9M0oqWaXDZrB3r2Ntwmc9iJcNV/nfBQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js" integrity="sha512-K/oyQtMXpxI4+K0W7H25UopjM8pzq0yrVdFdG21Fh5dBe91I40pDd9A4lzNlHPHBIP2cwZuoxaUSX0GJSObvGA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/ar-dz.min.js" integrity="sha512-qpDG6agspDXhnOZkCoWtFNJ13B6Fq6pwIuZoLw0b05J8TDd1qohuTaemmrpsN3ZVtB7AI7ZnqH5CVVIj01SV5g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+                    <script>   
+                        document.addEventListener("DOMContentLoaded", function () {
+                            flatpickr("#createtime", {
+                                enableTime: true,
+                                dateFormat: "Y-m-d H:i:s",
+                            });
+                        }); 
+                    </script>
+                    
+                    <script>   
+                        document.addEventListener("DOMContentLoaded", function () {
+                            flatpickr("#updatetime", {
+                                enableTime: true,
+                                dateFormat: "Y-m-d H:i:s",
+                            });
+                        }); 
+                    </script>
+                    
+
+<script>   
+$("#user_group").validate({
+  submitHandler: function(form) {
+    event.preventDefault();
+    var $this = $(this);
+    $this.prop("disabled", true).html("{{_('Please wait')}}");
+    $("#app-loading-indicator").removeClass("opacity-0");
+    var formData = $('#user_group').serialize();
+    var type = $this.data('type');
+    var buttonText = $this.text();
+
+    $.ajax({
+        type: "POST",
+        url: "user/group/save",
+        data: formData,
+        contentType: 'application/x-www-form-urlencoded',
+        processData: false,
+        success: function (data) {
+            toastr.success(_('Submit Successfully'));
+            $this.prop("disabled", false).html(buttonText);
+            if (type == 'submit-return') {
+                window.location.href = 'user/group';
+            } else if (type == 'submit-new-entry') {
+                window.location.href = 'user/group/add';
+            } else {
+                window.location.reload();
+            }
+        },
+        error: function (xhr, status, error) {
+            let message = xhr.responseJSON.message;
+            toastr.error(message);
+            currentButton.prop("disabled", false);
+        },
+        complete: function (xhr, textStatus) {
+            $("#app-loading-indicator").addClass("opacity-0");
+        },
+    });
+
+    return false;
+  }
+});
+</script>
+{% endblock javascript %}
+{% block content %}
+<!-- Page body -->
+<div class="page-body pt-6">
+    <div class="container-fluid px-4">
+        <div class="row">
+            <div class="col-md-5 mx-auto">
+                <form id="user_group_form" method="post" onsubmit="return UserGroupSave();" action>
+                    <div class="mb-[20px]">
+    <label class="form-label" for="id" required>{{_('ID')}}</label>
+   <input class="form-control" type="hidden" id="id" name="id"  value="{{value.id}}" placeholder="ID"  required/>{{value.id}}
+  </div>
+<div class="mb-[20px]">
+    <label class="form-label" for="name" >{{_('Group Name')}}</label>
+   <input class="form-control" type="text" id="name" name="name"  value="{{value.name}}" placeholder="Group Name"  />
+  </div>
+<div class="mb-[20px]">
+    <label class="form-label" for="rules" >{{_('Permission Nodes')}}</label>
+   <input class="form-control" type="text" id="rules" name="rules"  value="{{value.rules}}" placeholder="Permission Nodes"  />
+  </div>
+<div class="mb-[20px]">
+    <label class="form-label" for="createtime" >{{_('Creation Time')}}</label>
+   <input type="datetime" class="form-control" id="createtime" name="createtime" value="{{value.createtime}}" placeholder="Creation Time"  />
+  </div>
+<div class="mb-[20px]">
+    <label class="form-label" for="updatetime" >{{_('Update Time')}}</label>
+   <input type="datetime" class="form-control" id="updatetime" name="updatetime" value="{{value.updatetime}}" placeholder="Update Time"  />
+  </div>
+<div class="mb-[20px]">
+    <label class="form-label" for="status" required>{{_('Status')}}</label>
+   <select id="status" type="text" class="form-select" name="status">
+    <option value="normal">{{_('Normal')}}</option>
+  <option value="hidden">{{_('Hidden')}}</option>
+
+</select>  </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button form="user_group_form" data-type="submit" class="btn btn-primary btn-submit">
+                            {{_('Submit')}}
+                        </button>
+                        <button form="user_group_form" data-type="submit-return" class="btn btn-primary btn-submit">
+                            {{_('Submit & Return')}}
+                        </button>
+                        <button form="user_group_form" data-type="submit-new-entry" class="btn btn-primary btn-submit">
+                            {{_('Submit & New Entry')}}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>{% endblock content %}

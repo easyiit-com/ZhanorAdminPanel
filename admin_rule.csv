@@ -1,0 +1,73 @@
+id,type,pid,addon,name,url_path,title,description,icon,menutype,extend,createtime,updatetime,weigh,status
+1,menu,0,0,admin.dashboard,/admin/dashboard,Dashboard,None,ti ti-dashboard,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,1,normal
+2,menu,0,0,admin.general,/admin/general,General,None,ti ti-settings,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,2,normal
+3,menu,2,0,admin.general.profile,/admin/general/profile,Profile,None,ti ti-user,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,11,normal
+4,action,3,0,admin.general.profile.save,/admin/general/profile/save,Save,,,blank,None,2024/1/22 14:32,2024/1/22 14:32,34,normal
+5,menu,2,0,admin.general.category,/admin/general/category,Category,None,ti ti-leaf,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,7,normal
+6,action,6,0,admin.general.category.add,/admin/general/category/add,Add,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,27,normal
+7,action,6,0,admin.general.category.edit,/admin/general/category/edit/{id},Edit,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,28,normal
+8,action,6,0,admin.general.category.save,/admin/general/category/save,Save,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,28,normal
+9,action,6,0,admin.general.category.delete,/admin/general/category/delete,Delete,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,29,normal
+10,menu,2,0,admin.general.config,/admin/general/config,Config,None,ti ti-cog,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,8,normal
+11,action,10,0,admin.general.config.add,/admin/general/config/add,Add,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,32,normal
+12,action,10,0,admin.general.config.save,/admin/general/config/save,Save,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,33,normal
+13,action,10,0,admin.general.config.delete,/admin/general/config/delete,Delete,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,34,normal
+14,action,10,0,admin.general.config.table.list,/admin/general/config/table/list,Table List,NULL,NULL,NULL,NULL,2024/4/2 11:51,2024/4/2 11:51,0,normal
+15,menu,0,0,admin.attachment,/admin/attachment/,Attachment,None,ti ti-file-image-o,blank,None,2024/1/22 14:32,2024/1/22 14:32,9,normal
+16,menu,15,0,admin.attachment.image,/admin/attachment/image,Attachment Image,None,ti ti-file-image-o,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,9,normal
+17,action,16,0,admin.attachment.image.add,/admin/attachment/image/add,Add,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,35,normal
+18,action,16,0,admin.attachment.image.edit,/admin/attachment/image/edit/{id},Edit,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,36,normal
+19,action,16,0,admin.attachment.image.save,/admin/attachment/image/save,Save,None,None,addtabs,None,2024/1/23 14:32,2024/1/23 14:32,37,normal
+20,action,16,0,admin.attachment.image.delete,/admin/attachment/image/delete,Delete,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,37,normal
+21,menu,15,0,admin.attachment.file,/admin/attachment/file,Attachment File,None,ti ti-file-image-o,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,10,normal
+22,action,21,0,admin.attachment.file.add,/admin/attachment/file/add,Add,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,38,normal
+23,action,21,0,admin.attachment.file.edit,/admin/attachment/file/edit/{id},Edit,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,39,normal
+24,action,21,0,admin.attachment.file.save,/admin/attachment/file/save,Save,None,None,addtabs,None,2024/1/23 14:32,2024/1/23 14:32,40,normal
+25,action,21,0,admin.attachment.file.delete,/admin/attachment/file/delete,Delete,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,40,normal
+26,menu,0,0,admin.addon,/admin/addon,Addon,Addon Marketplace,ti ti-rocket,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,3,normal
+27,action,26,0,admin.addon.state,/admin/addon/state,Update state,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,16,normal
+28,action,26,0,admin.addon.config,/admin/addon/config,Setting,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,17,normal
+29,action,26,0,admin.addon.refresh,/admin/addon/refresh,Refresh,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,18,normal
+30,action,26,0,admin.addon.multi,/admin/addon/multi,Multi,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,19,normal
+31,action,26,0,admin.addon.install,/admin/addon/install,Install,,,blank,None,2024/1/22 14:32,2024/1/22 14:32,16,normal
+32,action,26,0,admin.addon.uninstall,/admin/addon/uninstall,Uninstall,,,blank,None,2024/1/22 14:32,2024/1/22 14:32,16,normal
+33,action,26,0,admin.addon.update.status,/admin/addon/update/status,Update status,,,blank,None,2024/3/8 9:00,2024/3/8 9:00,0,normal
+34,action,26,0,admin.addon.download,/admin/addon/download,Download,,,blank,None,2024/3/14 9:18,2024/3/14 9:18,0,normal
+35,menu,0,0,admin.auth,/auth,Auth,None,ti ti-adjustments-alt,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,4,normal
+36,menu,35,0,admin.admin.user,/admin/admin/user,Admin Manage,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,20,normal
+37,action,37,0,admin.admin.user.add,/admin/admin/user/add,Add,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,41,normal
+38,action,37,0,admin.admin.user.edit,/admin/admin/user/edit/{id},Edit,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,42,normal
+39,action,37,0,admin.admin.user.save,/admin/admin/user/save,Save,None,None,addtabs,None,2024/1/23 14:32,2024/1/23 14:32,43,normal
+40,action,37,0,admin.admin.user.delete,/admin/admin/user/delete,Delete,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,43,normal
+41,menu,35,0,admin.admin.group,/admin/admin/group,Admin Group,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,21,normal
+42,action,41,0,admin.admin.group.add,/admin/admin/group/add,Add,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,44,normal
+43,action,41,0,admin.admin.group.edit,/admin/admin/group/edit/{id},Edit,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,45,normal
+44,action,41,0,admin.admin.group.save,/admin/admin/group/save,Save,None,None,addtabs,None,2024/1/23 14:32,2024/1/23 14:32,46,normal
+45,action,41,0,admin.admin.group.delete,/admin/admin/group/delete,Delete,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,46,normal
+46,menu,35,0,admin.admin.rule,/admin/admin/rule,Admin Rule,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,47,normal
+47,action,47,0,admin.admin.rule.add,/admin/admin/rule/add,Add,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,47,normal
+48,action,47,0,admin.admin.rule.edit,/admin/admin/rule/edit/{id},Edit,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,48,normal
+49,action,47,0,admin.admin.rule.save,/admin/admin/rule/save,Save,None,None,addtabs,None,2024/1/23 14:32,2024/1/23 14:32,49,normal
+50,action,47,0,admin.admin.rule.delete,/admin/admin/rule/delete,Delete,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,49,normal
+51,menu,35,0,admin.admin.log,/admin/adminl/log,Admin Log,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,50,normal
+52,action,51,0,admin.admin.log.delete,/admin/admin/log/delete,Delete,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,51,normal
+53,menu,0,0,admin.users,/admin/users,User Manage,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,24,normal
+54,menu,53,0,admin.user.user,/admin/user/user,User Manage,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,24,normal
+55,action,54,0,admin.user.user.add,/admin/user/user/add,Add,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,54,normal
+56,action,54,0,admin.user.user.edit,/admin/user/user/edit/{id},Edit,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,53,normal
+57,action,54,0,admin.user.user.save,/admin/user/user/save,Save,None,None,addtabs,None,2024/1/23 14:32,2024/1/23 14:32,55,normal
+58,action,54,0,admin.user.user.delete,/admin/user/user/delete,Del,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,55,normal
+59,menu,53,0,admin.user.group,/admin/user/group,User Group,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,25,normal
+60,action,59,0,admin.user.group.add,/admin/user/group/add,Add,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,56,normal
+61,action,59,0,admin.user.group.edit,/admin/user/group/edit/{id},Edit,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,57,normal
+62,action,59,0,admin.user.group.save,/admin/user/group/save,Save,None,None,addtabs,None,2024/1/23 14:32,2024/1/23 14:32,58,normal
+63,action,59,0,admin.user.group.delete,/admin/user/group/delete,Del,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,58,normal
+64,menu,53,0,admin.user.rule,/admin/user/rule,User Rule,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,26,normal
+65,action,65,0,admin.user.rule.add,/admin/user/rule/add,Add,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,61,normal
+66,action,65,0,admin.user.rule.edit,/admin/user/rule/edit/{id},Edit,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,62,normal
+67,action,65,0,admin.user.rule.save,/admin/user/rule/save,Save,None,None,addtabs,None,2024/1/23 14:32,2024/1/23 14:32,63,normal
+68,action,65,0,admin.user.rule.delete,/admin/user/rule/delete,Del,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,60,normal
+69,menu,53,0,admin.user.balance.log,/admin/user/balance/log,User Balance Log,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,25,normal
+70,action,69,0,admin.user.balance.log.delete,/admin/user/balance/log/delete,Del,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,58,normal
+71,menu,53,0,admin.user.score.log,/admin/user/score/log,User Score Log,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,25,normal
+72,action,71,0,admin.user.score.log.delete,/admin/user/score/log/delete,Del,None,None,addtabs,None,2024/1/22 14:32,2024/1/22 14:32,58,normal

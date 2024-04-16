@@ -1,0 +1,252 @@
+<!-- index.html -->
+{% extends "zhanor_admin:templates/admin/layout/default.jinja2" %}
+{% block javascript %}
+<script src="/static/assets/js/backend/addon.js"></script>
+{% endblock javascript %}
+{% block content %}
+<div class="page-body pt-6">
+    <div class="container-fluid px-4">
+        <div class="mb-2">
+            <a href="/admin/addon/add" class="btn btn-success">
+                <i class="ti ti-plus"></i>
+                {{_('Add')}}
+            </a>
+            <a href="javascript:void(0)" class="btn delete-selected btn-warning">
+                <i class="ti ti-trash"></i>
+                {{_('Batch Deletion')}}
+            </a>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
+                    <li class="nav-item">
+                        <a href="#tabs-network-addon" class="nav-link active" data-bs-toggle="tab">{{_('Network Addon')}}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#tabs-local-addon" class="nav-link" data-bs-toggle="tab">{{_('Local Addon')}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane active show" id="tabs-network-addon">
+                        <div id="table-default" class="card-table table-responsive">
+                            <table class="table action-table">
+                                <thead>
+                                    <tr>
+                                        <th><input class="form-check-input m-0 align-middle select-all" type="checkbox"
+                                                aria-label="Select invoice"></th>
+                                        <th><button class="table-sort" data-sort="sort-name">ID</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Title')}}</button>
+                                        </th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('UUID')}}</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Author')}}</button>
+                                        </th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Version')}}</button>
+                                        </th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Downloads Count')}}</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Paid')}}</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Enabled')}}</button>
+                                        </th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Created')}}</button>
+                                        </th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Updated')}}</button>
+                                        </th>
+                                        <th class="!text-end">{{_('Actions')}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-tbody align-middle text-heading">
+                                    <!-- TODO -->
+                                    {% for value in network_addon_list %}
+                                    <tr id="addon-{{ value.id }}">
+                                        <td><input class="form-check-input m-0 align-middle id-checkbox" type="checkbox"
+                                                aria-label="Select invoice" value="{{value.id}}"></td>
+                                        <td class="sort-name">{{ value.id }}</td>
+                                        <td class="sort-name">{{ value.title }}</td>
+                                        <td class="sort-name">{{ value.uuid }}</td>
+                                        <td class="sort-name">{{ value.author }}</td>
+                                        <td class="sort-name">{{ value.version }}</td>
+                                        <td class="sort-name">{{ value.downloads }}</td>
+                                        <td class="sort-name">
+                                            {% if value.price=='0.00' %}
+                                            <span class="text-success">{{_('Free')}}</span>
+                                            {% elif value.is_paid=="1"%}
+                                            <span class="text-success">{{_('Paid')}}</span>
+                                            {% else %}
+                                            {{_('Unbought')}}
+                                            {% endif %}
+
+                                        </td>
+                                        <td class="sort-name">
+                                            {% if value.installed=='0'%}
+                                            <span class="text-info">{{_('No Install')}}</span>
+                                            {% else %}
+                                            <label class="form-check form-switch">
+                                                <input class="form-check-input switch-enable"
+                                                    data-uuid="{{ value.uuid }}" type="checkbox" {% if
+                                                    value.enabled=='1' %}checked{% endif %}>
+                                            </label>
+                                            {% endif %}
+
+
+                                        </td>
+                                        <td class="sort-name">{{ value.createtime }}</td>
+                                        <td class="sort-name">{{ value.updatetime }}</td>
+
+                                        <td class="!text-end whitespace-nowrap d-block">
+                                            {% if value.installed=='0'%}
+                                            <a href="javascript:;" class="btn btn-success btn-install"
+                                                data-id="{{ value.id }}" title="Install">
+                                                <i class="ti ti-world-download"></i>{{_('Install')}}
+                                            </a>
+                                            {% else %}
+                                            {% if value.setting_menu|length >0 %}
+                                            <div class="btn">
+                                                <a class="dropdown-toggle" href="#navbar-help" data-bs-toggle="dropdown"
+                                                    data-bs-auto-close="outside" role="button" aria-expanded="false">
+                                                    <span class="nav-link-title">
+                                                        {{_('Setting')}}
+                                                    </span>
+                                                </a>
+                                                <div class="dropdown-menu">
+                                                    {% for menu in value.setting_menu%}
+                                                    <a class="btn btn-success btn-setting" href="{{menu.route}}"><i
+                                                            class="ti ti-settings"></i>{{_(menu.title)}}</a>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            <a href="javascript:;" class="btn btn-danger btn-uninstall"
+                                                data-id="{{ value.id }}" title="Uninstall">
+                                                <i class="ti ti-trash-filled"></i>{{_('Uninstall')}}
+                                            </a>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div
+                            class="flex items-center border-solid border-t border-r-0 border-b-0 border-l-0 border-[--tblr-border-color] px-[--tblr-card-cap-padding-x] py-[--tblr-card-cap-padding-y] [&_.rounded-md]:rounded-full">
+                            <div class="m-0 ms-auto p-0">
+                                <ul class="pagination ">
+                                    {% if current_page > 1 %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ current_page - 1 }}" tabindex="-1"
+                                            aria-disabled="true">
+                                            <i class="ti ti-arrow-left"></i>
+                                            {{_('Prev')}}
+                                        </a>
+                                    </li>
+                                    {% endif %}
+
+                                    {% for i in range(1, total_pages + 1) %}
+                                    {% if i == current_page %}
+                                    <li class="page-item active"><a class="page-link" href="#">{{ i }}</a></li>
+
+                                    {% else %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                                    {% endif %}
+                                    {% endfor %}
+
+                                    {% if current_page < total_pages %} <li class="page-item">
+                                        <a class="page-link" href="?page={{ current_page + 1 }}">
+                                            {{_('next')}}
+                                            <i class="ti ti-arrow-right"></i>
+                                        </a>
+                                        </li>
+                                        {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tabs-local-addon">
+                        <div id="table-default" class="card-table table-responsive">
+                            <table class="table action-table">
+                                <thead>
+                                    <tr>
+                                        <th><input class="form-check-input m-0 align-middle select-all" type="checkbox"
+                                                aria-label="Select invoice"></th>
+                                        <th><button class="table-sort" data-sort="sort-name">ID</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Title')}}</button>
+                                        </th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('UUID')}}</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Author')}}</button>
+                                        </th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Version')}}</button>
+                                        </th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Downloads Count')}}</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('MD5')}}</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Paid')}}</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Enabled')}}</button>
+                                        </th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Created')}}</button>
+                                        </th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Updated')}}</button>
+                                        </th>
+                                        <th class="!text-end">{{_('Actions')}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-tbody align-middle text-heading">
+                                    <!-- TODO -->
+                                    {% for value in local_addon_list %}
+                                    <tr id="addon-{{ value.id }}">
+                                        <td><input class="form-check-input m-0 align-middle id-checkbox" type="checkbox"
+                                                aria-label="Select invoice" value="{{value.id}}"></td>
+                                        <td class="sort-name">{{ value.id }}</td>
+                                        <td class="sort-name">{{ value.title }}</td>
+                                        <td class="sort-name">{{ value.uuid }}</td>
+                                        <td class="sort-name">{{ value.author }}</td>
+                                        <td class="sort-name">{{ value.version }}</td>
+                                        <td class="sort-name">{{ value.downloads }}</td>
+                                        <td class="sort-name">{{ value.md5_hash }}</td>
+                                        <td class="sort-name">
+                                            {% if value.price=='0.00' %}
+                                            <span class="text-success">{{_('Free')}}</span>
+                                            {% elif value.is_paid=="1"%}
+                                            <span class="text-success">{{_('Paid')}}</span>
+                                            {% else %}
+                                            {{_('Unbought')}}
+                                            {% endif %}
+
+                                        </td>
+                                        <td class="sort-name">
+                                            {% if value.installed=='0'%}
+                                            <span class="text-info">{{_('No Install')}}</span>
+                                            {% else %}
+                                            <label class="form-check form-switch">
+                                                <input class="form-check-input switch-enable"
+                                                    data-uuid="{{ value.uuid }}" type="checkbox" {% if
+                                                    value.enabled=='1' %}checked{% endif %}>
+                                            </label>
+                                            {% endif %}
+                                        </td>
+                                        <td class="sort-name">{{ value.createtime }}</td>
+                                        <td class="sort-name">{{ value.updatetime }}</td>
+                                        <td class="!text-end whitespace-nowrap">
+
+                                            {% for menu in value.setting_menu%}
+                                            <a class="btn btn-success btn-setting" href="{{menu.route}}"><i
+                                                    class="ti ti-settings"></i>{{_(menu.title)}}</a>
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
