@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+from os.path import isdir
 from pyramid.config import Configurator
 from pyramid.session import SignedCookieSessionFactory
 from pyramid.csrf import CookieCSRFStoragePolicy
@@ -47,8 +49,8 @@ def main(global_config, **settings):
             plugins_status = {}
 
         for key, value in plugins_status.items():
-            if value == "enabled":
-                plugin_name = key
+            plugin_name = key
+            if value == "enabled" and isdir(os.path.join(plugins_directory),plugin_name):
                 config.include(f".plugins.{plugin_name.strip()}")
         config.registry.settings["plugins_status"] = plugins_status
 

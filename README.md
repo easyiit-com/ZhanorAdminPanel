@@ -156,6 +156,20 @@ sqlalchemy.url = mysql://root:123456@localhost:3306/zhanor_admin_100?charset=utf
 
 ```
 
+gunicorn启动命令：
+
+```
+
+.venv/bin/gunicorn --bind 0.0.0.0:6543 --paste development.ini
+
+```
+
+未安装gunicorn，则需要执行以下命令安装：
+
+```
+ .venv/bin/pip install gunicorn
+```
+
 启动后默认访问地址：http://127.0.0.1:6543
 
 后台地址：http://127.0.0.1:6543/admin
