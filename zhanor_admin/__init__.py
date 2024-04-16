@@ -50,7 +50,7 @@ def main(global_config, **settings):
 
         for key, value in plugins_status.items():
             plugin_name = key
-            if value == "enabled" and isdir(os.path.join(plugins_directory),plugin_name):
+            if value == "enabled" and isdir(os.path.join(plugins_directory,plugin_name)):
                 config.include(f".plugins.{plugin_name.strip()}")
         config.registry.settings["plugins_status"] = plugins_status
 
