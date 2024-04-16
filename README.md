@@ -129,6 +129,12 @@ sqlalchemy.url = mysql://root:123456@localhost:3306/zhanor_admin_100?charset=utf
 
 7.使用脚本将默认数据加载到数据库中。
 
+提醒：执行此命令前，请先注释下文件zhanor_admin/_init__.py的第25行
+
+config.include(".routes")
+
+先不要加载路由，否则会出现路由错误，执行完后取消此段代码注释
+
 加载默认数据至数据库：
 
 ```

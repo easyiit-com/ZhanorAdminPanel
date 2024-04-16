@@ -257,7 +257,7 @@ def uninstall_view(request):
     renderer="json",
     request_method="POST",
 )
-def download_view(request):
+def update_status(request):
     plugin_name = request.POST.get("plugin_name")
     status = request.POST.get("status")
     try:
