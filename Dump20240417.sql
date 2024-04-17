@@ -16,43 +16,6 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `addon`
---
-
-DROP TABLE IF EXISTS `addon`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `addon` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL,
-  `author` varchar(80) NOT NULL,
-  `uuid` varchar(120) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `version` varchar(50) NOT NULL,
-  `downloads` int(11) NOT NULL,
-  `download_url` varchar(255) NOT NULL,
-  `md5_hash` varchar(32) NOT NULL,
-  `price` decimal(10,0) DEFAULT NULL,
-  `paid` smallint(6) NOT NULL,
-  `installed` smallint(6) NOT NULL,
-  `enabled` smallint(6) NOT NULL,
-  `setting_menu` text,
-  `createtime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updatetime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `addon`
---
-
-LOCK TABLES `addon` WRITE;
-/*!40000 ALTER TABLE `addon` DISABLE KEYS */;
-/*!40000 ALTER TABLE `addon` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `admin_group`
 --
 
@@ -134,9 +97,7 @@ CREATE TABLE `admin_rule` (
   `updatetime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Updatetime',
   `weigh` int(11) NOT NULL DEFAULT '0' COMMENT 'Weigh',
   `status` enum('normal','hidden') NOT NULL DEFAULT 'normal' COMMENT 'Status',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name_UNIQUE` (`name`),
-  UNIQUE KEY `url_path_UNIQUE` (`url_path`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=73 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -206,7 +167,7 @@ CREATE TABLE `alembic_version` (
 
 LOCK TABLES `alembic_version` WRITE;
 /*!40000 ALTER TABLE `alembic_version` DISABLE KEYS */;
-INSERT INTO `alembic_version` VALUES ('a2f984124a0a');
+INSERT INTO `alembic_version` VALUES ('d0741213782d');
 /*!40000 ALTER TABLE `alembic_version` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -219,7 +180,7 @@ DROP TABLE IF EXISTS `attachment_file`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `attachment_file` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `category` varchar(50) DEFAULT 'default' COMMENT 'Category',
+  `category` varchar(50) DEFAULT 'default' COMMENT 'GeneralCategory',
   `admin_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Administrator ID',
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Member ID',
   `path_file` varchar(255) NOT NULL DEFAULT '' COMMENT 'Physical Path',
@@ -255,7 +216,7 @@ DROP TABLE IF EXISTS `attachment_image`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `attachment_image` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `category` varchar(50) DEFAULT 'default' COMMENT 'Category',
+  `category` varchar(50) DEFAULT 'default' COMMENT 'GeneralCategory',
   `admin_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Administrator ID',
   `user_id` int(11) NOT NULL DEFAULT '0' COMMENT 'Member ID',
   `path_image` varchar(255) NOT NULL COMMENT 'Physical Path',
@@ -301,7 +262,7 @@ CREATE TABLE `common_ems` (
   `ip` varchar(30) DEFAULT '' COMMENT 'IP Address',
   `createtime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='Email Verification Code Table';
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -329,7 +290,7 @@ CREATE TABLE `common_sms` (
   `ip` varchar(30) DEFAULT '' COMMENT 'IP Address',
   `createtime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='SMS Verification Code Table';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -350,9 +311,9 @@ DROP TABLE IF EXISTS `demo`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `demo` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `user_id` int(11) DEFAULT '0' COMMENT 'Member ID',
-  `admin_id` int(11) DEFAULT '0' COMMENT 'Administrator ID',
-  `category_id` int(11) DEFAULT '0' COMMENT 'Category ID (Single Select)',
+  `user_id` int(11) DEFAULT NULL COMMENT 'Member ID',
+  `admin_id` int(11) DEFAULT NULL COMMENT 'Administrator ID',
+  `category_id` int(11) DEFAULT NULL COMMENT 'Category ID (Single Select)',
   `category_ids` varchar(100) DEFAULT NULL COMMENT 'Category IDs (Multiple Select)',
   `tags` varchar(255) DEFAULT NULL COMMENT 'Tags',
   `week` enum('monday','tuesday','wednesday') DEFAULT NULL COMMENT 'Weekday (Single Select): monday=Monday, tuesday=Tuesday, wednesday=Wednesday',
@@ -369,23 +330,23 @@ CREATE TABLE `demo` (
   `city` varchar(100) DEFAULT NULL COMMENT 'City/Province',
   `json` varchar(255) DEFAULT NULL COMMENT 'Configuration (key=value pairs)',
   `multiplejson` varchar(1500) DEFAULT NULL COMMENT 'Two-Dimensional Array: title=Title, intro=Introduction, author=Author, age=Age',
-  `price` decimal(10,0) DEFAULT '0' COMMENT 'Price',
-  `views` int(11) DEFAULT '0' COMMENT 'Views',
+  `price` decimal(10,0) DEFAULT NULL COMMENT 'Price',
+  `views` int(11) DEFAULT NULL COMMENT 'Views',
   `workrange` varchar(100) DEFAULT NULL COMMENT 'Time Range',
   `startdate` date DEFAULT NULL COMMENT 'Start Date',
   `activitytime` datetime DEFAULT NULL COMMENT 'Activity Time',
-  `year` year(4) DEFAULT '0000' COMMENT 'Year',
-  `times` time DEFAULT '00:00:00' COMMENT 'Time',
-  `refreshtime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Refresh Time',
-  `createtime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Creation Time',
-  `updatetime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Update Time',
-  `deletetime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Deletion Time',
-  `weigh` int(11) DEFAULT '0' COMMENT 'Weight',
-  `switch` smallint(6) DEFAULT '0' COMMENT 'Switch',
-  `status` enum('normal','hidden') DEFAULT 'normal' COMMENT 'Status',
-  `state` smallint(6) DEFAULT '0' COMMENT 'State Value: 0=Disabled, 1=Normal, 2=Recommended',
+  `year` year(4) DEFAULT NULL COMMENT 'Year',
+  `times` time DEFAULT NULL COMMENT 'Time',
+  `refreshtime` datetime DEFAULT NULL COMMENT 'Refresh Time',
+  `createtime` datetime DEFAULT NULL COMMENT 'Creation Time',
+  `updatetime` datetime DEFAULT NULL COMMENT 'Update Time',
+  `deletetime` datetime DEFAULT NULL COMMENT 'Deletion Time',
+  `weigh` int(11) DEFAULT NULL COMMENT 'Weight',
+  `switch` smallint(6) DEFAULT NULL COMMENT 'Switch',
+  `status` enum('normal','hidden') DEFAULT NULL COMMENT 'Status',
+  `state` smallint(6) DEFAULT NULL COMMENT 'State Value: 0=Disabled, 1=Normal, 2=Recommended',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -394,7 +355,6 @@ CREATE TABLE `demo` (
 
 LOCK TABLES `demo` WRITE;
 /*!40000 ALTER TABLE `demo` DISABLE KEYS */;
-INSERT INTO `demo` VALUES (1,2,2,1,NULL,'Voluptatem qui cupidatat fugiat laboriosam pariatur Esse non nisi non omnis sit dicta dolorem aute in voluptatem dolorem magnam incidunt','monday','index','male','music','Officia libero numquam ut ut adipisicing necessitatibus culpa consequuntur ea totam labore ipsam no','<p>This is a Test,this content</p>','','','','Laboris,laboris,asperiores,obcaecati','Qui magna corporis magna pariatur C','Sunt rerum','a=1','[{\'a\':\'a1\'}]',108,38,'2024-04-16 00:00:0 to 2024-04-19 00:00:0','2024-04-16','2024-04-16 11:21:41',1983,'12:21:00','2024-04-16 11:21:41','2024-04-16 11:23:23','2024-04-16 11:23:23','2024-04-16 11:21:41',52,1,'normal',0);
 /*!40000 ALTER TABLE `demo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -408,7 +368,7 @@ DROP TABLE IF EXISTS `general_category`;
 CREATE TABLE `general_category` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `pid` int(11) NOT NULL COMMENT 'Parent ID',
-  `type` varchar(30) NOT NULL COMMENT 'Category Type',
+  `type` varchar(30) NOT NULL COMMENT 'GeneralCategory Type',
   `name` varchar(30) NOT NULL COMMENT 'Name',
   `image` varchar(100) DEFAULT '' COMMENT 'Image',
   `keywords` varchar(255) DEFAULT '' COMMENT 'Keywords',
@@ -522,41 +482,6 @@ INSERT INTO `user_group` VALUES (1,'default','1,2','2024-03-27 07:37:07','2024-0
 UNLOCK TABLES;
 
 --
--- Table structure for table `user_recharge_order`
---
-
-DROP TABLE IF EXISTS `user_recharge_order`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user_recharge_order` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `trade_no` varchar(100) DEFAULT NULL COMMENT 'Trade No',
-  `user_id` int(10) unsigned DEFAULT '0' COMMENT 'User ID',
-  `amount` int(10) unsigned DEFAULT '0' COMMENT 'amount',
-  `pay_amount` int(10) unsigned DEFAULT '0' COMMENT 'Pay Amount',
-  `transaction_id` varchar(120) DEFAULT '',
-  `payment_method` varchar(50) DEFAULT '' COMMENT 'Payment Method',
-  `pay_time` datetime DEFAULT NULL COMMENT 'Pay Time',
-  `ip` varchar(50) DEFAULT NULL COMMENT 'IP',
-  `useragent` varchar(255) DEFAULT NULL COMMENT 'UserAgent',
-  `memo` varchar(255) DEFAULT NULL COMMENT 'Memo',
-  `createtime` datetime DEFAULT NULL COMMENT 'Creation Time ',
-  `updatetime` datetime DEFAULT NULL COMMENT 'Update Time',
-  `status` enum('created','paid','expired') DEFAULT 'created' COMMENT 'Status',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='User Recharge Order';
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `user_recharge_order`
---
-
-LOCK TABLES `user_recharge_order` WRITE;
-/*!40000 ALTER TABLE `user_recharge_order` DISABLE KEYS */;
-/*!40000 ALTER TABLE `user_recharge_order` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `user_rule`
 --
 
@@ -576,9 +501,7 @@ CREATE TABLE `user_rule` (
   `updatetime` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Update Time',
   `weigh` int(11) DEFAULT '0' COMMENT 'Weight',
   `status` enum('normal','hidden') DEFAULT 'normal' COMMENT 'Status',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `name_UNIQUE` (`name`),
-  UNIQUE KEY `url_path_UNIQUE` (`url_path`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -654,8 +577,7 @@ CREATE TABLE `user_user` (
   `verification` varchar(255) DEFAULT NULL COMMENT 'Verification',
   `token` varchar(50) DEFAULT NULL COMMENT 'Token',
   `status` enum('normal','hidden') DEFAULT 'normal' COMMENT 'Status',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -678,4 +600,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-16 11:42:17
+-- Dump completed on 2024-04-17  9:50:33
