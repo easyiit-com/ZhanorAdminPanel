@@ -6,21 +6,12 @@
 {% block content %}
 <div class="page-body pt-6">
     <div class="container-fluid px-4">
-        <div class="mb-2">
-            <a href="/admin/addon/add" class="btn btn-success">
-                <i class="ti ti-plus"></i>
-                {{_('Add')}}
-            </a>
-            <a href="javascript:void(0)" class="btn delete-selected btn-warning">
-                <i class="ti ti-trash"></i>
-                {{_('Batch Deletion')}}
-            </a>
-        </div>
         <div class="card">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" data-bs-toggle="tabs">
                     <li class="nav-item">
-                        <a href="#tabs-network-addon" class="nav-link active" data-bs-toggle="tab">{{_('Network Addon')}}</a>
+                        <a href="#tabs-network-addon" class="nav-link active" data-bs-toggle="tab">{{_('Network
+                            Addon')}}</a>
                     </li>
                     <li class="nav-item">
                         <a href="#tabs-local-addon" class="nav-link" data-bs-toggle="tab">{{_('Local Addon')}}</a>
@@ -31,7 +22,7 @@
                 <div class="tab-content">
                     <div class="tab-pane active show" id="tabs-network-addon">
                         <div id="table-default" class="card-table table-responsive">
-                            <table class="table action-table">
+                            <table class="table">
                                 <thead>
                                     <tr>
                                         <th><input class="form-check-input m-0 align-middle select-all" type="checkbox"
@@ -44,7 +35,8 @@
                                         </th>
                                         <th><button class="table-sort" data-sort="sort-name">{{_('Version')}}</button>
                                         </th>
-                                        <th><button class="table-sort" data-sort="sort-name">{{_('Downloads Count')}}</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Downloads
+                                                Count')}}</button></th>
                                         <th><button class="table-sort" data-sort="sort-name">{{_('Paid')}}</button></th>
                                         <th><button class="table-sort" data-sort="sort-name">{{_('Enabled')}}</button>
                                         </th>
@@ -93,14 +85,14 @@
                                         <td class="sort-name">{{ value.createtime }}</td>
                                         <td class="sort-name">{{ value.updatetime }}</td>
 
-                                        <td class="!text-end whitespace-nowrap d-block">
+                                        <td class="!text-end whitespace-nowrap d-block"> 
                                             {% if value.installed=='0'%}
                                             <a href="javascript:;" class="btn btn-success btn-install"
                                                 data-id="{{ value.id }}" title="Install">
                                                 <i class="ti ti-world-download"></i>{{_('Install')}}
                                             </a>
                                             {% else %}
-                                            {% if value.setting_menu|length >0 %}
+                                            
                                             <div class="btn">
                                                 <a class="dropdown-toggle" href="#navbar-help" data-bs-toggle="dropdown"
                                                     data-bs-auto-close="outside" role="button" aria-expanded="false">
@@ -108,14 +100,18 @@
                                                         {{_('Setting')}}
                                                     </span>
                                                 </a>
+                                                
                                                 <div class="dropdown-menu">
+                                                    {% if value.setting_menu|length >0 %}
                                                     {% for menu in value.setting_menu%}
                                                     <a class="btn btn-success btn-setting" href="{{menu.route}}"><i
-                                                            class="ti ti-settings"></i>{{_(menu.title)}}</a>
+                                                            class="ti ti-settings"></i>{{menu.title}}</a>
                                                     {% endfor %}
-                                                </div>
+                                                    {% endif %}
+                                                </div> 
+                                                
                                             </div>
-                                            {% endif %}
+                                           
                                             <a href="javascript:;" class="btn btn-danger btn-uninstall"
                                                 data-id="{{ value.id }}" title="Uninstall">
                                                 <i class="ti ti-trash-filled"></i>{{_('Uninstall')}}
@@ -179,7 +175,8 @@
                                         </th>
                                         <th><button class="table-sort" data-sort="sort-name">{{_('Version')}}</button>
                                         </th>
-                                        <th><button class="table-sort" data-sort="sort-name">{{_('Downloads Count')}}</button></th>
+                                        <th><button class="table-sort" data-sort="sort-name">{{_('Downloads
+                                                Count')}}</button></th>
                                         <th><button class="table-sort" data-sort="sort-name">{{_('MD5')}}</button></th>
                                         <th><button class="table-sort" data-sort="sort-name">{{_('Paid')}}</button></th>
                                         <th><button class="table-sort" data-sort="sort-name">{{_('Enabled')}}</button>

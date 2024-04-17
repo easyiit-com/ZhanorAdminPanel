@@ -28,4 +28,5 @@ command.txt
 zhanor_admin/alembic/versions/*
 !zhanor_admin/alembic/versions/README.txt
 zhanor_admin/static/uploads/*
+zhanor_admin/static/addon/*
 production.ini
