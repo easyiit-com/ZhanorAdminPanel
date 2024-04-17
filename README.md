@@ -54,13 +54,13 @@ sudo apt-get install libsqlite3-dev
 克隆：
 
 ```
-git clone https://github.com/easyiit-com/zhanor_admin_panel.git
+git clone https://github.com/easyiit-com/ZhanorAdminPanel.git
 ```
 
 进入目录
 
 ```
-cd zhanor_admin_panel
+cd ZhanorAdminPanel
 ```
 
 2.如果尚未创建，请创建一个 Python 虚拟环境，创建虚拟环境：
@@ -129,9 +129,9 @@ sqlalchemy.url = mysql://root:123456@localhost:3306/zhanor_admin_100?charset=utf
 
 7.使用脚本将默认数据加载到数据库中。
 
-提醒：执行此命令前，请先注释下文件zhanor_admin/_init__.py的第25行
+提醒：执行此命令前，请先注释下文件zhanor_admin/_init__.py的第68行
 
-config.include(".routes")
+config.scan()
 
 先不要加载路由，否则会出现路由错误，执行完后取消此段代码注释
 
@@ -195,7 +195,7 @@ server
     listen 80;
     server_name admin.zhanor.com;
     index index.html index.htm default.htm default.html;
-    root /www/python_venv/zhanor_admin_panel/zhanor_admin/__init__.py;
+    root /www/python_venv/ZhanorAdminPanel/zhanor_admin/__init__.py;
 
     #SSL-START SSL相关配置
     #error_page 404/404.html;

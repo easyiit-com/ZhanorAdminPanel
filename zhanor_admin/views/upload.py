@@ -91,7 +91,7 @@ def upload_view(request):
                 mime_type = mimetypes.types_map[f".{format}"]
                 attachment_image.mimetype = mime_type
                 attachment_image.createtime = now(request)
-                attachment_image.uploadtime = now(request)
+                attachment_image.updatetime = now(request)
                 request.dbsession.add(attachment_image)
             else:
                 attachment_file = AttachmentFile()
