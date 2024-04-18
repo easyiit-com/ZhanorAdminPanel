@@ -100,16 +100,14 @@
                                                         {{_('Setting')}}
                                                     </span>
                                                 </a>
-                                                
+                                                {% if value.setting_menu|length >0 %}
                                                 <div class="dropdown-menu">
-                                                    {% if value.setting_menu|length >0 %}
                                                     {% for menu in value.setting_menu%}
                                                     <a class="btn btn-success btn-setting" href="{{menu.route}}"><i
                                                             class="ti ti-settings"></i>{{menu.title}}</a>
                                                     {% endfor %}
-                                                    {% endif %}
                                                 </div> 
-                                                
+                                                 {% endif %}
                                             </div>
                                            
                                             <a href="javascript:;" class="btn btn-danger btn-uninstall"
