@@ -117,21 +117,21 @@ def includeme(config):
     # 获取数据库检查器来获取所有表的信息
     inspector = inspect(engine)
     # 打开一个文件用于写入dbsession.add()语句
-    # with open('orm_add_statements.txt', 'w') as f:
-    #     # 遍历所有表
-    #     for table_name in inspector.get_table_names():
-    #         # 获取对应表的ORM类
-    #         table_class = next((c for c in models.__dict__.values() if hasattr(c, '__tablename__') and c.__tablename__ == table_name), None)
-    #         if table_class is not None:
-    #             # 查询该表的所有记录
-    #             records = scoped_sess.query(table_class).all()
+    with open('orm_add_statements.txt', 'w') as f:
+        # 遍历所有表
+        for table_name in inspector.get_table_names():
+            # 获取对应表的ORM类
+            table_class = next((c for c in models.__dict__.values() if hasattr(c, '__tablename__') and c.__tablename__ == table_name), None)
+            if table_class is not None:
+                # 查询该表的所有记录
+                records = scoped_sess.query(table_class).all()
                 
-    #             for record in records:
-    #                 # 生成模拟的dbsession.add()调用语句
-    #                 add_params = ', '.join(f"{col}='{getattr(record, col)}'" for col in record.__table__.columns.keys())
-    #                 add_stmt = f"dbsession.add({table_class.__name__}({add_params}))"
-    #                 # 写入文件
-    #                 f.write(add_stmt + "\n")
+                for record in records:
+                    # 生成模拟的dbsession.add()调用语句
+                    add_params = ', '.join(f"{col}='{getattr(record, col)}'" for col in record.__table__.columns.keys())
+                    add_stmt = f"dbsession.add({table_class.__name__}({add_params}))"
+                    # 写入文件
+                    f.write(add_stmt + "\n")
 
     # 关闭数据库会话
     scoped_sess.remove()

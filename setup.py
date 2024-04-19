@@ -27,7 +27,7 @@ requires = [
     'bcrypt',
     'pyramid_jwt',
     'PyJWT',
-    'wechatpy',
+    'wechatpayv3',
     'cryptography',
     'qrcode[pil]',
     'alipay-sdk-python'

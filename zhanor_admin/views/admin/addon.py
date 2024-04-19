@@ -126,56 +126,51 @@ def download_view(request):
     request_method="POST",
 )
 def install_view(request):
-    # try:
-    addon_id = request.POST.get("addon_id")
-    api_url = request.registry.settings["api.url"]
-    data = {"username": "user", "addon_id": addon_id}
-    headers = {"Content-Type": "application/json"}
-    # headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    url = f'{api_url}/details'
-    response = requests.post(url, data=json.dumps(data), headers=headers)
-    logging.info(f"install_view url:{url}")
-    logging.info(f"install_view response:{response.status_code}==={response}")
-    if response.status_code == 200:
-        data = response.json()['data']
-        logging.info(f"response={data}")
-        uuid = data["uuid"]
-        logging.info(f"response={uuid}")
-        settings = request.registry.settings
-        plugins_directory = settings.get("plugins.directory", "plugins")
-        static_directory = settings.get("static.directory", "static")
-        download_url = data["download_url"]
-        plugin_download_file = download_file(download_url, plugins_directory)
-        plugin_static_folder = os.path.join(plugins_directory, f"{uuid}/static")
-        if plugin_download_file:
-            logging.info(f"plugin {uuid} download successful")
-            unzip_file(plugin_download_file, plugins_directory)
-            update_pligin_status(request, uuid, "enabled")
-            staitcfiles = f"{static_directory}/addon/{uuid}"
-            if os.path.exists(staitcfiles):
-                shutil.rmtree(staitcfiles)
-            shutil.copytree(
-                plugin_static_folder, staitcfiles
-            )
-            os.remove(plugin_download_file)
-        else:
-            return Response(
-                json.dumps(
-                    {"status": 0, "message": "Json file no exits", "data": data}
-                ),
-                content_type="application/json",
-                charset="utf-8",
-                status=200,
-            )
-    # except Exception as e:
-    #     return Response(
-    #         json.dumps(
-    #             {"status": 0, "message": f"An error has occurred :{e}", "data": {}}
-    #         ),
-    #         content_type="application/json",
-    #         charset="utf-8",
-    #         status=500,
-    #     )
+    try:
+        addon_id = request.POST.get("addon_id")
+        api_url = request.registry.settings["api.url"]
+        data = {"username": "user", "addon_id": addon_id}
+        headers = {"Content-Type": "application/json"}
+        url = f'{api_url}/details'
+        response = requests.post(url, data=json.dumps(data), headers=headers)
+        if response.status_code == 200:
+            data = response.json()['data']
+            uuid = data["uuid"]
+            settings = request.registry.settings
+            plugins_directory = settings.get("plugins.directory", "plugins")
+            static_directory = settings.get("static.directory", "static")
+            download_url = data["download_url"]
+            plugin_download_file = download_file(download_url, plugins_directory)
+            plugin_static_folder = os.path.join(plugins_directory, f"{uuid}/static")
+            if plugin_download_file:
+                logging.info(f"plugin {uuid} download successful")
+                unzip_file(plugin_download_file, plugins_directory)
+                update_pligin_status(request, uuid, "enabled")
+                staitcfiles = f"{static_directory}/addon/{uuid}"
+                if os.path.exists(staitcfiles):
+                    shutil.rmtree(staitcfiles)
+                shutil.copytree(
+                    plugin_static_folder, staitcfiles
+                )
+                os.remove(plugin_download_file)
+            else:
+                return Response(
+                    json.dumps(
+                        {"status": 0, "message": "Json file no exits", "data": data}
+                    ),
+                    content_type="application/json",
+                    charset="utf-8",
+                    status=200,
+                )
+    except Exception as e:
+        return Response(
+            json.dumps(
+                {"status": 0, "message": f"An error has occurred :{e}", "data": {}}
+            ),
+            content_type="application/json",
+            charset="utf-8",
+            status=500,
+        )
     return Response(
         json.dumps({"status": 1, "message": "Success", "data": {}}),
         content_type="application/json",

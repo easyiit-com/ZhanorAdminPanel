@@ -3,7 +3,7 @@ from io import BytesIO
 import mimetypes
 import os
 import uuid
-
+import urllib.parse
 import qrcode
 from zhanor_admin.common.defs import now
 from pyramid.view import view_config
@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 @view_config(route_name='qr',permission="user", request_method='GET')
 def qr_view(request):
     data = request.matchdict.get('data')
+    data = urllib.parse.unquote(data).replace(":/","://")
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,

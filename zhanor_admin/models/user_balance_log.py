@@ -1,10 +1,10 @@
 # user_balance_log.py
 from datetime import datetime, date 
 from decimal import Decimal
-from sqlalchemy import DateTime,Numeric,Integer,Column,String
+from sqlalchemy import Integer,Numeric,DateTime,String,Column
 from sqlalchemy.dialects.mysql import SET, ENUM, YEAR
 from sqlalchemy.sql.expression import ClauseElement
-from .meta import Base
+from zhanor_admin.models.meta import Base
  
 class UserBalanceLog(Base):
     __tablename__ = 'user_balance_log'

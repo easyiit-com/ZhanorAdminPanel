@@ -9,11 +9,11 @@ import logging
 @view_config(route_name='user.dashboard', permission='user', renderer='zhanor_admin:templates/user/dashboard.jinja2')
 def dashboard_view(request):
     user_id = request.authenticated_userid if(request is not None and hasattr(request,'authenticated_userid')) else None
-    logging.info(f'dashboard_view====>request.authenticated_userid====>{user_id}')
+    user = request.user
     return {
             'balance_log': {},
-            "balance":0,
-            "score":0,                                
+            "balance":user.balance,
+            "score":user.score,                                
             "credits":0,                                 
             "files":0,                                  
             "images":0,
