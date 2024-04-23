@@ -30,3 +30,4 @@ zhanor_admin/alembic/versions/*
 zhanor_admin/static/uploads/*
 zhanor_admin/static/addon/*
 production.ini
+zhanor_admin/views/api/plugins.py

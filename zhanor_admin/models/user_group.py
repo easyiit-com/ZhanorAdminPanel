@@ -1,9 +1,10 @@
 # user_group.py
 from datetime import datetime, date 
 from decimal import Decimal
-from sqlalchemy import Column,Integer,String,DateTime
+from sqlalchemy import Column,String,DateTime,Integer
 from sqlalchemy.dialects.mysql import SET, ENUM, YEAR
-from .meta import Base
+from sqlalchemy.sql.expression import ClauseElement
+from zhanor_admin.models.meta import Base
  
 class UserGroup(Base):
     __tablename__ = 'user_group'
@@ -12,7 +13,7 @@ class UserGroup(Base):
     rules = Column(String(512),comment='Permission Nodes') 
     createtime = Column(DateTime,comment='Creation Time') 
     updatetime = Column(DateTime,comment='Update Time') 
-    status = Column(ENUM('normal', 'hidden'), nullable=False, default = 'normal' ,comment='Status') 
+    status = Column(ENUM('normal', 'hidden'), nullable=False,comment='Status') 
 
 
 
@@ -56,3 +57,27 @@ class UserGroup(Base):
             result_dict[field] = value
         
         return result_dict
+    
+    def initialize_special_fields(self):
+        for field_name, field in self.__mapper__.columns.items():
+            if isinstance(field.type, (ENUM, SET)):
+                options_method = getattr(self, f"{field_name}_property".upper(), None)
+                if options_method and hasattr(options_method(), 'members'):
+                    setattr(self, field_name, field.type.members)
+                elif isinstance(field.type, ENUM):
+                    if isinstance(field.default, ClauseElement):
+                        pass
+                    else:
+                        if field.default is not None and hasattr(field.default, 'arg'):
+                            setattr(self, field_name, field.default.arg if field.default.arg != 'None' else '')
+                elif isinstance(field.type, SET): 
+                    setattr(self, field_name, frozenset())
+
+            elif field.default is not None: 
+                if isinstance(field.default, ClauseElement):
+                    pass
+                else:
+                    if field.default is not None and hasattr(field.default, 'arg'):
+                            setattr(self, field_name, field.default.arg if field.default.arg != 'None' else '')
+            else:
+                setattr(self, field_name,'')

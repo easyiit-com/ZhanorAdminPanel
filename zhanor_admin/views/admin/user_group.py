@@ -33,11 +33,12 @@ def index_view(request):
 # add
 @view_config(route_name='admin.user.group.add', permission="admin", renderer='zhanor_admin:templates/admin/user/group/add.jinja2')
 def add_view(request):
-    result = {}
-    return {'value': result}
+    result_instance = UserGroup()
+    result_instance.initialize_special_fields()
+    return {'value': result_instance}
 
 # edit
-@view_config(route_name='admin.user.group.edit', renderer='zhanor_admin:templates/admin/user/group/edit.jinja2')
+@view_config(route_name='admin.user.group.edit',permission="admin", renderer='zhanor_admin:templates/admin/user/group/edit.jinja2')
 def edit_view(request):
     user_group_id = request.matchdict.get('id')
     result = request.dbsession.query(UserGroup).filter(UserGroup.id == user_group_id).first()

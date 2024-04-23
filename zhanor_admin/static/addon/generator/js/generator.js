@@ -1,6 +1,6 @@
 $(document).ready(function () {
 	"use strict";
-	var modelEditor, templateIndexEditor, templateAddEditor, templateEditEditor, viewsEditor, jsEditor, routeEditor;
+	var modelEditor, templateIndexEditor, templateAddEditor, templateEditEditor, viewsEditor, apiEditor, jsEditor, routeEditor;
 
 	// 初始化编辑器的函数
 	function initAceEditor(elementId, mode) {
@@ -15,6 +15,7 @@ $(document).ready(function () {
 	templateAddEditor = initAceEditor('template_add_code', 'html');
 	templateEditEditor = initAceEditor('template_edit_code', 'html');
 	viewsEditor = initAceEditor('views_code', 'python');
+	apiEditor = initAceEditor('api_code', 'python');
 	jsEditor = initAceEditor('js_code', 'javascript');
 	routeEditor = initAceEditor('route_code', 'python');
 
@@ -38,7 +39,7 @@ $(document).ready(function () {
 					checkboxesHtml += '<label class="form-check form-check-inline"><input class="form-check-input table_fields" type="checkbox" type="checkbox" name="fields[]" value="' + list[i] + '" checked><span class="form-check-label">' + list[i] + '</span></label>';
 				}
 
-				show_code(data.data.model_code, data.data.template_index_code, data.data.template_add_code, data.data.template_edit_code, data.data.views_code, data.data.js_code, data.data.route_code)
+				show_code(data.data.model_code, data.data.template_index_code, data.data.template_add_code, data.data.template_edit_code, data.data.views_code,data.data.api_code, data.data.js_code, data.data.route_code)
 				$('#table_fields').on('click', '.table_fields', function () {
 					const tableName = $('#table_name').val();
 					console.log(tableName);
@@ -55,7 +56,7 @@ $(document).ready(function () {
 							contentType: false,
 							processData: false,
 							success: function (data) {
-								show_code(data.data.model_code, data.data.template_index_code, data.data.template_add_code, data.data.template_edit_code, data.data.views_code, data.data.js_code, data.data.route_code)
+								show_code(data.data.model_code, data.data.template_index_code, data.data.template_add_code, data.data.template_edit_code, data.data.views_code,data.data.api_code, data.data.js_code, data.data.route_code)
 								toastr.success('Get Successfully')
 							}
 						});
@@ -75,60 +76,18 @@ $(document).ready(function () {
 		});
 	});
 
-	function show_code(model_code, template_index_code, template_add_code, template_edit_code, views_code, js_code, route_code) {
+	function show_code(model_code, template_index_code, template_add_code, template_edit_code, views_code, api_code, js_code, route_code) {
 		modelEditor.setValue(model_code);
 		templateIndexEditor.setValue(template_index_code);
 		templateAddEditor.setValue(template_add_code);
 		templateEditEditor.setValue(template_edit_code);
 		viewsEditor.setValue(views_code);
+		apiEditor.setValue(api_code);
 		jsEditor.setValue(js_code);
 		routeEditor.setValue(route_code);
 	};
 
-	function fields_change() {
-		$('.table_fields"]').on('click', function () {
-			const tableName = $('#table_name').val();
-			console.log(tableName);
-
-			var checkedValues = $('.table_fields:checked').map(function () {
-				return this.value;
-			}).get().join(",");
-			console.log(checkedValues);
-
-			$.ajax({
-				type: "get",
-				url: "/admin/plugins/generator/code/" + tableName,
-				success: function (data) {
-					var list = data.data.table_fields;
-
-					var checkboxesHtml = '';
-					for (var i = 0; i < list.length; i++) {
-						checkboxesHtml += '<label class="form-check form-check-inline"><input class="form-check-input" type="checkbox" type="checkbox" name="fields[]" value="' + list[i] + '" checked><span class="form-check-label">' + list[i] + '</span></label>';
-					}
-
-					$('#table_fields').html(checkboxesHtml);
-
-					modelEditor.setValue(data.data.model_code);
-					templateIndexEditor.setValue(data.data.template_index_code);
-					templateAddEditor.setValue(data.data.template_add_code);
-					templateEditEditor.setValue(data.data.template_edit_code);
-					viewsEditor.setValue(data.data.views_code);
-					jsEditor.setValue(data.data.js_code);
-					routeEditor.setValue(data.data.route_code);
-					toastr.success('Get Successfully')
-				},
-				error: function (data) {
-					var err = data.responseJSON.errors;
-					$.each(err, function (index, value) {
-						toastr.error(value);
-					});
-					document.getElementById("generator_button").disabled = false;
-					document.getElementById("generator_button").innerHTML = "Save";
-				}
-			});
-		});
-	}
-
+  
 
 	function generator() {
 		"use strict";
@@ -138,11 +97,23 @@ $(document).ready(function () {
 
 		var formData = new FormData();
 		formData.append('table_name', $("#table_name").val());
+
+		formData.append('model_code_checked', $("#model_code_checked").val());
+		formData.append('template_index_code_checked', $("#template_index_code_checked").val());
+		formData.append('template_add_code_checked', $("#template_add_code_checked").val());
+		formData.append('template_edit_code_checked', $("#template_edit_code_checked").val());
+		formData.append('views_code_checked', $("#views_code_checked").val());
+		formData.append('api_code_checked', $("#api_code_checked").val());
+		formData.append('js_code_checked', $("#js_code_checked").val());
+		
+		formData.append('route_code', $("#table_name").val());
+
 		formData.append('model_code', modelEditor.getValue());
 		formData.append('template_index_code', templateIndexEditor.getValue());
 		formData.append('template_add_code', templateAddEditor.getValue());
 		formData.append('template_edit_code', templateEditEditor.getValue());
 		formData.append('views_code', viewsEditor.getValue());
+		formData.append('api_code', apiEditor.getValue());
 		formData.append('js_code', jsEditor.getValue());
 		formData.append('route_code', routeEditor.getValue());
 

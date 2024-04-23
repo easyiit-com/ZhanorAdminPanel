@@ -23,6 +23,7 @@ requires = [
     'requests',
     'passlib',
     'Pillow',
+    'colander',
     'pytz',
     'bcrypt',
     'pyramid_jwt',
@@ -30,7 +31,9 @@ requires = [
     'wechatpayv3',
     'cryptography',
     'qrcode[pil]',
-    'alipay-sdk-python'
+    'alipay-sdk-python',
+    'pyramid_openapi3',
+    'ruamel.yaml'
 ]
 
 tests_require = [

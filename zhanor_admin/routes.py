@@ -88,6 +88,16 @@ def includeme(config):
     add_localized_route(config, "user.auth.send.mail", "/user/send/mail")
     add_localized_route(config, "user.auth.logout", "/user/logout")
     add_localized_route(config, "user", "/user")
+    
+    add_localized_route(config, 'api.user.group', '/api/user/group/{page}')
+    add_localized_route(config, 'api.user.group.save', '/api/user/group/save/{id}')
+    add_localized_route(config, 'api.user.group.delete', '/api/user/group/delete/{id}')
+    
+    add_localized_route(config, 'api.auth.login', '/api/auth/login')
+    add_localized_route(config, 'api.auth.register', '/api/auth/register')
+    add_localized_route(config, 'api.auth.forgot.password', '/api/auth/forgot/password')
+    add_localized_route(config, 'api.auth.send.mail', '/api.auth/send/mail')
+    add_localized_route(config, 'api.auth.logout', '/api/auth/logout')
 
     # config.add_route('admin_area', '/admin/*subpath',
     #                  custom_predicates=())

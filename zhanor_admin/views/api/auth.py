@@ -1,9 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
+import logging
 import jwt
-from pyramid.csrf import new_csrf_token
 from sqlalchemy import or_
-
+from pathlib import Path
 from pyramid.httpexceptions import HTTPFound, HTTPUnauthorized
 from pyramid.security import (
     remember,
@@ -12,6 +12,8 @@ from pyramid.security import (
 from pyramid.view import (
     view_config,
 )
+from ruamel.yaml import YAML
+from pyramid_openapi3 import validate_request, validate_response
 from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.response import Response
 from zhanor_admin.common.defs import check_ems_code, generate_ems_code, ip, now
@@ -20,51 +22,73 @@ from zhanor_admin.models.user_user import UserUser
 from zhanor_admin.subscribers import _
 import transaction
 
+def load_yaml_schema(file_path: str) -> dict:
+    with Path(file_path).open('r') as stream:
+        yaml = YAML(typ='safe')
+        return yaml.load(stream)
+
+spec = load_yaml_schema('login_api.yaml')
+
+
 @view_config(
-    route_name="user.auth.login",
-    request_method="GET",
-    permission=NO_PERMISSION_REQUIRED,
-    renderer="zhanor_admin:templates/user/login.jinja2",
+    route_name="api.auth.login",
+    renderer="json",
+    require_csrf=False,
+    request_method="POST",
 )
-def login_view(request):
-    user = getattr(request, "user", None)
-    if user:
-        location = request.route_url("user.dashboard")
-        return HTTPFound(location=location)
-    return {"title": "user login"}
-
-
-@view_config(route_name="user.auth.login", renderer="json", request_method="POST")
+@validate_request(spec, "auth.login")  # "auth.login"应当与YAML中operationId对应
+@validate_response(spec, "auth.login")
 def login(request):
     settings = request.registry.settings
-    referrer = "/user/dashboard"
-    came_from = request.params.get("came_from", referrer)
-    email = request.params.get("email")
-    password = request.params.get("password")
+    if request.content_type.startswith("application/json"):
+        try:
+            body = json.loads(request.body.decode("utf-8"))
+            email = body.get("email")
+            password = body.get("password")
+        except (json.JSONDecodeError, ValueError):
+            return Response(
+                json.dumps(
+                    {"status": 0, "message": "Invalid JSON or 'page' value", "data": {}}
+                ),
+                content_type="application/json",
+                charset="utf-8",
+                status=500,
+            )
+    else:
+        email = request.params.get("email")
+        password = request.params.get("password")
     user = request.dbsession.query(UserUser).filter(UserUser.email == email).first()
+    
     if user is not None:
         if user.check_password(password):
-            new_csrf_token(request)
             user.successions = user.successions + 1
             user.maxsuccessions = user.maxsuccessions + 1
             user.logintime = now(request)
             user.loginip = ip(request)
-            headers = remember(request, user.id, role="user")
+            exp_time = now(request) + timedelta(days=1)
             payload = {
                 "userid": user.id,
                 "role": "user",
-                "exp": now(request) + timedelta(days=1),
+                "exp": exp_time,
             }
             jwt_auth_secret = settings.get("jwt.secret", "zhanor_jin")
             token = jwt.encode(payload, jwt_auth_secret, algorithm="HS256")
-            response_data = {"status": 1, "token": token, "message": _("Login Success")}
-            response_body = json.dumps(response_data)
+            logging.info(f"exp_time: %s" % exp_time)
+ 
+            dt = datetime.fromisoformat(str(exp_time))
+            utc_timestamp = dt.astimezone(timezone.utc).timestamp()
+
+            response_data = {
+                "status": 1,
+                "token": token,
+                "exp_time": utc_timestamp,
+                "message": _("Login Success"),
+            }
             return Response(
-                body=response_body,
+                json.dumps(response_data),
                 content_type="application/json",
                 charset="utf-8",
                 status=200,
-                headerlist=headers,
             )
         else:
             user.loginfailure = user.loginfailure + 1
@@ -82,27 +106,26 @@ def login(request):
 
 
 @view_config(
-    route_name="user.auth.register",
-    request_method="GET",
-    permission=NO_PERMISSION_REQUIRED,
-    renderer="zhanor_admin:templates/user/register.jinja2",
+    route_name="api.auth.register",
+    renderer="json",
+    require_csrf=False,
+    request_method="POST",
 )
-def register_view(request):
-    user = getattr(request, "user", None)
-    if user:
-        location = request.route_url("user.dashboard")
-        return HTTPFound(location=location)
-    return {"title": _("User Register"), "value": {}}
-
-
-@view_config(route_name="user.auth.register", renderer="json", request_method="POST")
+@validate_request(spec, "auth.register")
+@validate_response(spec, "auth.register")
 def register(request):
     email = request.params.get("email")
     mobile = request.params.get("mobile")
     name = request.params.get("name")
     user = (
         request.dbsession.query(UserUser)
-        .filter(or_(UserUser.email == email, UserUser.name == name, UserUser.mobile == mobile))
+        .filter(
+            or_(
+                UserUser.email == email,
+                UserUser.name == name,
+                UserUser.mobile == mobile,
+            )
+        )
         .first()
     )
 
@@ -111,7 +134,9 @@ def register(request):
             json.dumps(
                 {
                     "status": 0,
-                    "message": _("The email or name or mobile you entered is already registered"),
+                    "message": _(
+                        "The email or name or mobile you entered is already registered"
+                    ),
                     "data": {},
                 }
             ),
@@ -169,22 +194,13 @@ def register(request):
 
 
 @view_config(
-    route_name="user.auth.forgot.password",
-    request_method="GET",
-    permission=NO_PERMISSION_REQUIRED,
-    renderer="zhanor_admin:templates/user/forgot_password.jinja2",
+    route_name="api.auth.forgot.password",
+    renderer="json",
+    require_csrf=False,
+    request_method="POST",
 )
-def forgot_password_view(request):
-    user = getattr(request, "user", None)
-    if user:
-        location = request.route_url("user.dashboard")
-        return HTTPFound(location=location)
-    return {"title": _("User Forgot Password")}
-
-
-@view_config(
-    route_name="user.auth.forgot.password", renderer="json", request_method="POST"
-)
+@validate_request(spec, "auth.forgot_password")
+@validate_response(spec, "auth.forgot_password")
 def forgot_password(request):
     email = request.params.get("email")
     password = request.params.get("password")
@@ -211,7 +227,9 @@ def forgot_password(request):
                 json.dumps(
                     {
                         "status": 0,
-                        "message": _("Max attempts exceeded. Account temporarily locked. Retry in 30 minutes."),
+                        "message": _(
+                            "Max attempts exceeded. Account temporarily locked. Retry in 30 minutes."
+                        ),
                         "data": {},
                     }
                 ),
@@ -250,7 +268,14 @@ def forgot_password(request):
         )
 
 
-@view_config(route_name="user.auth.send.mail", renderer="json", request_method="POST")
+@view_config(
+    route_name="api.auth.send.mail",
+    renderer="json",
+    require_csrf=False,
+    request_method="POST",
+)
+@validate_request(spec, "auth.send_mail")
+@validate_response(spec, "auth.send_mail")
 def send_mail(request):
     settings = request.registry.settings
     email = request.params.get("email")
@@ -260,9 +285,7 @@ def send_mail(request):
         smtp_port = settings.get("smtp_port", "587")
         smtp_username = settings.get("smtp_username", "")
         smtp_password = settings.get("smtp_password", "")
-        mail_service = MailService(
-            smtp_host, smtp_port, smtp_username, smtp_password
-        )
+        mail_service = MailService(smtp_host, smtp_port, smtp_username, smtp_password)
         code = generate_ems_code(request, "forgot_password", email)
         if mail_service.send_email(
             "Verification Code",
@@ -302,11 +325,13 @@ def send_mail(request):
 
 
 @view_config(
-    route_name="user.auth.logout",
+    route_name="api.auth.logout",
     permission="user",
     renderer="json",
+    require_csrf=False,
     request_method="POST",
 )
+@validate_response(spec, "auth.logout") 
 def logout_view(request):
     headers = forget(request, role="user")
     response_data = {"status": 1, "message": _("Logout successful")}

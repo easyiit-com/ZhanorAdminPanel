@@ -1,0 +1,248 @@
+openapi: 3.0.2
+info:
+  title: Zhanor Admin API
+  version: 1.0.0
+  description: This document describes the authentication APIs including login, register, forgot password and sending emails.
+
+paths:
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: 用户登录
+      operationId: auth.login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: 用户的电子邮件地址
+                password:
+                  type: string
+                  format: password
+                  description: 用户的密码，经过客户端加密
+      responses:
+        '200':
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: 状态码
+                  token:
+                    type: string
+                    description: JWT令牌
+                  exp_time:
+                    type: integer
+                    description: JWT令牌过期时间戳（UTC）
+                  message:
+                    type: string
+                    description: 成功信息
+        '401':
+          description: 登录失败，无效的凭证或其他错误
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: 状态码
+                  message:
+                    type: string
+                    description: 错误信息
+
+  /api/auth/register:
+    post:
+      tags:
+        - User Management
+      summary: 用户注册
+      operationId: auth.register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: 注册用户的电子邮件地址
+                mobile:
+                  type: string
+                  description: 注册用户的手机号码
+                name:
+                  type: string
+                  description: 注册用户名
+                password:
+                  type: string
+                  format: password
+                  description: 注册用户的密码，将被服务器端加密存储
+      responses:
+        '201':
+          description: 注册成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: 状态码
+                  message:
+                    type: string
+                    description: 成功信息
+        '500':
+          description: 注册失败，如邮箱、名字或手机号码已存在
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: 状态码
+                  message:
+                    type: string
+                    description: 错误信息
+
+  /api/auth/forgot/password:
+    post:
+      tags:
+        - Password Management
+      summary: 忘记密码发送验证码
+      operationId: auth.forgot_password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: 用户的电子邮件地址
+                password:
+                  type: string
+                  format: password
+                  description: 新密码（如果已决定更改）
+                code:
+                  type: string
+                  description: 验证码
+      responses:
+        '200':
+          description: 发送验证码或重置密码成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: 状态码
+                  message:
+                    type: string
+                    description: 成功信息
+        '400':
+          description: 验证码错误或无效
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: 状态码
+                  message:
+                    type: string
+                    description: 错误信息
+
+  /api/auth/send/mail:
+    post:
+      tags:
+        - Email Services
+      summary: 发送邮件（例如找回密码邮件）
+      operationId: auth.send_mail
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: 目标邮箱地址
+      responses:
+        '200':
+          description: 邮件发送成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: 状态码
+                  message:
+                    type: string
+                    description: 成功信息
+        '500':
+          description: 邮件发送失败
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: 状态码
+                  message:
+                    type: string
+                    description: 错误信息
+
+  /api/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: 用户登出
+      operationId: auth.logout
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: 登出成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutSuccessResponse'
+
+components:
+  schemas:
+    LogoutSuccessResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: 状态码，1表示成功
+        message:
+          type: string
+          description: 操作结果信息
+
+securitySchemes:
+  BearerAuth:
+    type: http
+    scheme: bearer
+    bearerFormat: JWT
+    description: JWT令牌验证

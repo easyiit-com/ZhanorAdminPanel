@@ -29,9 +29,7 @@ def login_view(request):
 
 @view_config(route_name="admin.auth.login", renderer="json", request_method="POST")
 def login(request):
-    
     request.session.flash('User name and password is required')
-    
     settings = request.registry.settings
     referrer = "/admin/dashboard"
     came_from = request.params.get("came_from", referrer)

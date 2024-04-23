@@ -1,79 +1,78 @@
 <!-- index.jinja2 -->
 {% extends "zhanor_admin:templates/admin/layout/default.jinja2" %}
 {% block javascript %}
-$(document).ready(function () {
-	"user strict";
-	$(".select-all").click(function () {
-		var isChecked = $(this).prop("checked");
-		$(".id-checkbox").prop("checked", isChecked);
-	});
-	$('.delete-selected').click(function () {
-		var selectedIds = [];
-		$('.id-checkbox:checked').each(function () {
-			selectedIds.push($(this).val());
-		});
-        if (confirm(_('Are you sure you want to delete it?'))) {
-			if (selectedIds.length > 0) {
-				$.ajax({
-					type: "DELETE",
-					url: "user/group/delete",
-					contentType: 'application/json',
-					data: JSON.stringify({ ids: selectedIds }),
-					dataType: 'json',
-					success: function (response) {
-						for (var i = 0; i < selectedIds.length; i++) {
-							const thisElement = document.getElementById('user-' + selectedIds[i]);
-							if (thisElement) {
-								thisElement.remove();
-							}
-						}
+<script>
+    $(document).ready(function () {
+        "user strict";
+        $(".select-all").click(function () {
+            var isChecked = $(this).prop("checked");
+            $(".id-checkbox").prop("checked", isChecked);
+        });
+        $('.delete-selected').click(function () {
+            var selectedIds = [];
+            $('.id-checkbox:checked').each(function () {
+                selectedIds.push($(this).val());
+            });
+            if (confirm(_('Are you sure you want to delete it?'))) {
+                if (selectedIds.length > 0) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/admin/user/group/delete",
+                        contentType: 'application/json',
+                        data: JSON.stringify({ ids: selectedIds }),
+                        dataType: 'json',
+                        success: function (response) {
+                            for (var i = 0; i < selectedIds.length; i++) {
+                                const thisElement = document.getElementById('user_group-' + selectedIds[i]);
+                                if (thisElement) {
+                                    thisElement.remove();
+                                }
+                            }
+                            toastr.success(_('Delete Successfully'))
+                        },
+                        error: function (xhr, status, error) {
+                            toastr.error(_('Delete Faile'), xhr.responseText);
+                        }
+                    });
+                } else {
+                    toastr.warning(_('Please first select the items you want to delete'));
 
-						toastr.success(_('Delete Successfully'))
-					},
-					error: function (xhr, status, error) {
-						toastr.error(_('Delete Faile'), xhr.responseText);
-					}
-				});
-			} else {
-				toastr.warning(_('Please first select the items you want to delete'));
-
-			}
-		}
-	});
-
-
-	$('.btn-delete').click(function (event) {
-		event.preventDefault();
-		var $this = $(this);
-		var UserId = $this.data('id');
-		if (confirm(_('Are you sure you want to delete it?'))) {
-			const selectedIds = [UserId];
-			$("#app-loading-indicator").removeClass("opacity-0");
-			$.ajax({
-				type: "DELETE",
-				url: "user/group/delete",
-				contentType: 'application/json',
-				data: JSON.stringify({ ids: selectedIds }),
-				processData: false,
-				success: function (data) {
-					const thisElement = $('#user-' + UserId);
-					if (thisElement.length) {
-						thisElement.remove();
-					}
-					toastr.success(localize.delete_done);
-				},
-				error: function (xhr, status, error) {
-					let message = xhr.responseJSON.message;
-					toastr.error(localize.delete_fail);
-				},
-				complete: function (xhr, textStatus) {
-					$("#app-loading-indicator").addClass("opacity-0");
-				},
-			});
-		}
-		return false;
-	})
-});
+                }
+            }
+        });
+        $('.btn-delete').click(function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var UserId = $this.data('id');
+            if (confirm(_('Are you sure you want to delete it?'))) {
+                const selectedIds = [UserId];
+                $("#app-loading-indicator").removeClass("opacity-0");
+                $.ajax({
+                    type: "DELETE",
+                    url: "/admin/user/group/delete",
+                    contentType: 'application/json',
+                    data: JSON.stringify({ ids: selectedIds }),
+                    processData: false,
+                    success: function (data) {
+                        const thisElement = $('#user_group-' + UserId);
+                        if (thisElement.length) {
+                            thisElement.remove();
+                        }
+                        toastr.success(localize.delete_done);
+                    },
+                    error: function (xhr, status, error) {
+                        let message = xhr.responseJSON.message;
+                        toastr.error(localize.delete_fail);
+                    },
+                    complete: function (xhr, textStatus) {
+                        $("#app-loading-indicator").addClass("opacity-0");
+                    },
+                });
+            }
+            return false;
+        })
+    });
+</script>
 {% endblock javascript %}
 {% block content %}
 <div class="page-body pt-6">
@@ -138,7 +137,7 @@ $(document).ready(function () {
 
                     </tfoot>
                 </table>
-                
+
             </div>
             <div
                 class="flex items-center border-solid border-t border-r-0 border-b-0 border-l-0 border-[--tblr-border-color] px-[--tblr-card-cap-padding-x] py-[--tblr-card-cap-padding-y] [&_.rounded-md]:rounded-full">
@@ -181,15 +180,13 @@ $(document).ready(function () {
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">{{_('Details')}} ID:{{value.id}}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-            <div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("ID")}}</div><div class="col">{{ value.id }} </div></div><div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("Group Name")}}</div><div class="col">{{ value.name }} </div></div><div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("Permission Nodes")}}</div><div class="col">{{ value.rules }} </div></div><div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("Creation Time")}}</div><div class="col">{{ value.createtime }} </div></div><div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("Update Time")}}</div><div class="col">{{ value.updatetime }} </div></div><div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("Status")}}</div><div class="col">{{ value.status }} </div></div>
+                <div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("ID")}}</div><div class="col">{{ value.id }} </div></div><div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("Group Name")}}</div><div class="col">{{ value.name }} </div></div><div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("Permission Nodes")}}</div><div class="col">{{ value.rules }} </div></div><div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("Creation Time")}}</div><div class="col">{{ value.createtime }} </div></div><div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("Update Time")}}</div><div class="col">{{ value.updatetime }} </div></div><div class="row mb-3 align-items-end"><div class="col-auto fw-bold"> {{_("Status")}}</div><div class="col">{{ value.status }} </div></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary"
-                    data-bs-dismiss="modal">{{_('Close')}}</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">{{_('Close')}}</button>
             </div>
         </div>
     </div>

@@ -29,28 +29,38 @@ def csrf_validation_failure(exc, request):
 
 @forbidden_view_config(renderer="zhanor_admin:templates/403.jinja2")
 def forbidden_view(exc, request):
-    path = request.path
-  
-    if request.path.startswith('/admin'):
-        next_url = request.route_url(
-                    "admin.auth.login"
-                )
+    if request.path.startswith("/admin"):
+        if request.method in ("POST", "DELETE"):
+            return Response(
+                json.dumps({"status": 0, "message": f"Need Login.", "data": {}}),
+                content_type="application/json",
+                charset="utf-8",
+                status=403,
+            )
+        next_url = request.route_url("admin.auth.login")
         return HTTPSeeOther(location=next_url)
     else:
-        next_url = request.route_url(
-                    "user.auth.login"
-                )
+        if request.method in ("POST", "DELETE"):
+            return Response(
+                json.dumps({"status": 0, "message": f"User Need Login.", "data": {}}),
+                content_type="application/json",
+                charset="utf-8",
+                status=403,
+            )
+        next_url = request.route_url("user.auth.login")
         return HTTPSeeOther(location=next_url)
-        logging.error(f"forbidden_view")
-        request.response.status = 403
-        return {}
-    
 
 
 @notfound_view_config(renderer="zhanor_admin:templates/404.jinja2")
 def notfound_view(request):
     if request.matched_route is not None:
         route_name = request.matched_route.name
-        logging.info(f'notfound_view_config====>route_name:{route_name}')
     request.response.status = 404
-    return {}
+    if request.method in ("POST", "DELETE"):
+        return Response(
+            json.dumps({"status": 0, "message": f"Page Not Found.", "data": {}}),
+            content_type="application/json",
+            charset="utf-8",
+            status=404,
+        )
+    return {"route_name": route_name}
